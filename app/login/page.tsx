@@ -32,7 +32,12 @@ export default function LoginPage() {
         return
       }
 
-      router.push('/')
+      // 根据角色跳转
+      if (data.user?.role === 'admin') {
+        router.push('/admin')
+      } else {
+        router.push('/')
+      }
       router.refresh()
     } catch {
       setError('网络错误，请稍后重试')

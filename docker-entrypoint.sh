@@ -35,5 +35,47 @@ npx prisma db push --skip-generate 2>&1 || {
   echo "⚠️ 数据库迁移失败，尝试继续启动..."
 }
 
+# 初始化管理员账户
+if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
+  echo "👤 初始化管理员账户..."
+  node -e "
+    const { PrismaPg } = require('@prisma/adapter-pg');
+    const { PrismaClient } = require('./lib/generated/prisma');
+    const bcrypt = require('bcryptjs');
+    const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
+    const prisma = new PrismaClient({ adapter });
+    (async () => {
+      try {
+        const existing = await prisma.teacher.findUnique({ where: { email: process.env.ADMIN_EMAIL } });
+        if (existing) {
+          if (existing.role !== 'admin') {
+            await prisma.teacher.update({ where: { email: process.env.ADMIN_EMAIL }, data: { role: 'admin', status: 'approved' } });
+            console.log('  已将现有账户升级为管理员');
+          } else {
+            console.log('  管理员账户已存在');
+          }
+        } else {
+          const hashed = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
+          await prisma.teacher.create({
+            data: {
+              email: process.env.ADMIN_EMAIL,
+              password: hashed,
+              name: process.env.ADMIN_NAME || '管理员',
+              subject: '管理',
+              role: 'admin',
+              status: 'approved',
+            },
+          });
+          console.log('  ✅ 管理员账户创建成功');
+        }
+      } catch (e) {
+        console.error('  ⚠️ 管理员初始化失败:', e.message);
+      } finally {
+        await prisma.\$disconnect();
+      }
+    })();
+  " 2>&1 || echo "  ⚠️ 管理员初始化脚本执行失败"
+fi
+
 echo "🎉 启动 Next.js 服务..."
 exec node server.js

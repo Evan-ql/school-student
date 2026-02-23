@@ -2,17 +2,18 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BookOpen, Mail, Lock, Eye, EyeOff, User, GraduationCap, ArrowRight, Loader2 } from 'lucide-react'
+import { BookOpen, Mail, Lock, Eye, EyeOff, User, GraduationCap, ArrowRight, Loader2, Building2, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
 
 const SUBJECTS = ['语文', '数学', '英语', '科学', '道德与法治', '音乐', '美术', '体育', '信息技术', '其他']
 
 export default function RegisterPage() {
   const router = useRouter()
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', subject: '' })
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirmPassword: '', subject: '', school: '' })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,6 +45,7 @@ export default function RegisterPage() {
           email: form.email,
           password: form.password,
           subject: form.subject,
+          school: form.school,
         }),
       })
 
@@ -54,13 +56,45 @@ export default function RegisterPage() {
         return
       }
 
-      router.push('/')
-      router.refresh()
+      // 注册成功，显示提示
+      setSuccess(true)
     } catch {
       setError('网络错误，请稍后重试')
     } finally {
       setLoading(false)
     }
+  }
+
+  // 注册成功提示页面
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4" style={{
+        background: 'linear-gradient(135deg, #e0f2fe 0%, #f0fdf4 30%, #faf5ff 60%, #fef3c7 100%)'
+      }}>
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-teal-200/40 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-sky-200/30 rounded-full blur-3xl" />
+        </div>
+        <div className="w-full max-w-md relative z-10">
+          <div className="backdrop-blur-xl bg-white/70 rounded-3xl shadow-lg shadow-black/5 border border-white/60 p-8 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-800 mb-2">注册成功！</h2>
+            <p className="text-sm text-slate-600 mb-6">
+              您的账户已创建成功，请等待管理员审核。<br />
+              审核通过后即可登录使用系统。
+            </p>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center w-full py-3 bg-gradient-to-r from-teal-400 to-emerald-500 text-white rounded-xl font-medium text-sm shadow-lg shadow-teal-200/50 hover:shadow-xl transition-all"
+            >
+              返回登录页
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -141,6 +175,20 @@ export default function RegisterPage() {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-slate-600 mb-1.5">学校 <span className="text-slate-400 font-normal">(选填)</span></label>
+              <div className="relative">
+                <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={form.school}
+                  onChange={e => setForm({ ...form, school: e.target.value })}
+                  placeholder="请输入您所在的学校"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/60 border border-slate-200/60 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300/50 focus:border-teal-300 transition-all text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-slate-600 mb-1.5">密码</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -188,7 +236,11 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <p className="mt-4 text-xs text-center text-slate-400">
+            注册后需要管理员审核通过才能使用
+          </p>
+
+          <div className="mt-4 text-center">
             <span className="text-sm text-slate-500">已有账号？</span>
             <Link href="/login" className="text-sm text-teal-600 font-medium ml-1 hover:text-teal-700">
               立即登录

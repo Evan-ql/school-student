@@ -11,6 +11,8 @@ export interface JwtPayload {
   email: string
   name: string
   subject: string
+  role: string      // "teacher" | "admin"
+  status: string    // "pending" | "approved" | "rejected"
 }
 
 // 密码加密
@@ -43,6 +45,13 @@ export async function getCurrentUser(): Promise<JwtPayload | null> {
   const token = cookieStore.get(COOKIE_NAME)?.value
   if (!token) return null
   return verifyToken(token)
+}
+
+// 检查是否为管理员
+export async function requireAdmin(): Promise<JwtPayload | null> {
+  const user = await getCurrentUser()
+  if (!user || user.role !== 'admin') return null
+  return user
 }
 
 // Cookie 设置选项
