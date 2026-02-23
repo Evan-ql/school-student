@@ -4,22 +4,30 @@ import { verifyPassword, generateToken, getAuthCookieOptions } from '@/lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const { username, password } = await request.json()
 
-    if (!email || !password) {
-      return NextResponse.json({ error: '请输入邮箱和密码' }, { status: 400 })
+    if (!username || !password) {
+      return NextResponse.json({ error: '请输入用户名/邮箱和密码' }, { status: 400 })
     }
 
-    // 查找用户
-    const teacher = await prisma.teacher.findUnique({ where: { email } })
+    // 查找用户 - 支持用户名或邮箱登录
+    const teacher = await prisma.teacher.findFirst({
+      where: {
+        OR: [
+          { email: username },
+          { name: username }
+        ]
+      }
+    })
+    
     if (!teacher) {
-      return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 })
+      return NextResponse.json({ error: '用户名/邮箱或密码错误' }, { status: 401 })
     }
 
     // 验证密码
     const isValid = await verifyPassword(password, teacher.password)
     if (!isValid) {
-      return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 })
+      return NextResponse.json({ error: '用户名/邮箱或密码错误' }, { status: 401 })
     }
 
     // 检查审核状态（管理员不受限制）
