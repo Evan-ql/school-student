@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # ========== PostgreSQL 数据库 ==========
+  db:
+    image: postgres:16-alpine
+    container_name: teaching-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: teacher
+      POSTGRES_PASSWORD: teacher123
+      POSTGRES_DB: teaching_assistant
+      TZ: Asia/Shanghai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teacher -d teaching_assistant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ========== Next.js 应用 ==========
+  app:
+    image: ghcr.io/evan-ql/school-student:latest
+    container_name: teaching-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://teacher:teacher123@db:5432/teaching_assistant?schema=public
+      JWT_SECRET: ${JWT_SECRET:-please-change-this-secret-in-production}
+      NODE_ENV: production
+      TZ: Asia/Shanghai
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads_data:/app/uploads
+
+  # ========== Watchtower 自动更新 ==========
+  watchtower:
+    image: containrrr/watchtower
+    container_name: teaching-watchtower
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: 300
+      WATCHTOWER_INCLUDE_STOPPED: "false"
+      WATCHTOWER_LABEL_ENABLE: "false"
+      TZ: Asia/Shanghai
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # 如果使用 GitHub Container Registry 需要认证，取消下面的注释
+      # - ~/.docker/config.json:/config.json:ro
+    command: teaching-app
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local

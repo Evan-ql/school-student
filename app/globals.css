@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f6ff;
+  --foreground: #1a2b4a;
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-heavy: rgba(255, 255, 255, 0.82);
+  --glass-bg-light: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: 0 2px 16px rgba(100, 150, 200, 0.08), 0 0 1px rgba(0, 0, 0, 0.05);
+  --glass-shadow-lg: 0 8px 32px rgba(100, 150, 200, 0.12), 0 0 1px rgba(0, 0, 0, 0.06);
+  --blur-amount: 24px;
+  --blur-heavy: 40px;
+  --accent: #4f9cf7;
+  --accent-light: rgba(79, 156, 247, 0.12);
 }
 
 @theme inline {
@@ -12,15 +22,244 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 100vh;
+}
+
+/* 清新渐变背景 */
+.glass-bg-gradient {
+  background:
+    radial-gradient(ellipse at 15% 0%, rgba(120, 200, 255, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 10%, rgba(167, 139, 250, 0.13) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 90%, rgba(110, 231, 183, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 50%, rgba(251, 191, 36, 0.06) 0%, transparent 40%),
+    #f0f6ff;
+  min-height: 100vh;
+}
+
+/* 毛玻璃卡片 */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-amount));
+  -webkit-backdrop-filter: blur(var(--blur-amount));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 18px;
+}
+
+.glass-card-heavy {
+  background: var(--glass-bg-heavy);
+  backdrop-filter: blur(var(--blur-heavy));
+  -webkit-backdrop-filter: blur(var(--blur-heavy));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-lg);
+  border-radius: 18px;
+}
+
+.glass-card-light {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 8px rgba(100, 150, 200, 0.06);
+  border-radius: 14px;
+}
+
+/* 毛玻璃导航栏 */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: saturate(180%) blur(var(--blur-amount));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--blur-amount));
+  border-bottom: 0.5px solid rgba(100, 150, 200, 0.12);
+}
+
+.glass-nav-bottom {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(var(--blur-amount));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--blur-amount));
+  border-top: 0.5px solid rgba(100, 150, 200, 0.12);
+}
+
+/* 毛玻璃按钮 */
+.glass-btn {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 4px rgba(100, 150, 200, 0.06);
+  transition: all 0.2s ease;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.glass-btn:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* 毛玻璃输入框 */
+.glass-input {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 220, 240, 0.5);
+  box-shadow: inset 0 1px 4px rgba(100, 150, 200, 0.06);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(79, 156, 247, 0.45);
+  box-shadow: 0 0 0 3px rgba(79, 156, 247, 0.12), inset 0 1px 4px rgba(100, 150, 200, 0.03);
+}
+
+/* 毛玻璃模态框 */
+.glass-modal-overlay {
+  background: rgba(15, 30, 60, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.glass-modal {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(var(--blur-heavy));
+  -webkit-backdrop-filter: blur(var(--blur-heavy));
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 24px 48px rgba(100, 150, 200, 0.15), 0 0 1px rgba(0, 0, 0, 0.06);
+  border-radius: 22px;
+}
+
+/* 毛玻璃Tab */
+.glass-tab {
+  background: rgba(100, 150, 200, 0.07);
+  border-radius: 12px;
+  padding: 3px;
+}
+
+.glass-tab-active {
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 1px 6px rgba(100, 150, 200, 0.1), 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 9px;
+}
+
+/* 毛玻璃标签 */
+.glass-badge {
+  background: rgba(79, 156, 247, 0.1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(79, 156, 247, 0.15);
+  border-radius: 20px;
+}
+
+/* 清新色调分割线 */
+.glass-divider {
+  height: 0.5px;
+  background: rgba(100, 150, 200, 0.1);
+}
+
+/* 允许输入框和文本区域选择文字 */
+input, textarea, select, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* 安全区域底部内边距 */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.pb-safe-nav {
+  padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* 移动端滚动优化 */
+.scroll-smooth {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 隐藏滚动条 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 苹果风格动画 */
+@keyframes glass-fade-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes glass-slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glass-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-glass-in {
+  animation: glass-fade-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-glass-slide-up {
+  animation: glass-slide-up 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.animate-glass-scale {
+  animation: glass-scale-in 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* 触摸反馈 */
+.touch-active:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+  transition: all 0.1s ease;
+}
+
+/* 清新色调的渐变按钮 */
+.btn-primary {
+  background: linear-gradient(135deg, #4f9cf7 0%, #6c63ff 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(79, 156, 247, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 12px rgba(79, 156, 247, 0.35);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(52, 211, 153, 0.25);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.25);
 }

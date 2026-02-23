@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ========== 用户认证 ==========
+model Teacher {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  password    String
+  name        String
+  subject     String
+  school      String?
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  classes         ClassTeacher[]
+  courses         Course[]
+  assignments     Assignment[]
+  aiConfig        AiConfig?
+  evaluations     Evaluation[]
+}
+
+model AiConfig {
+  id        String   @id @default(cuid())
+  teacherId String   @unique
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  provider  String
+  apiKey    String
+  model     String?
+  baseUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ========== 班级管理 ==========
+model Class {
+  id            String   @id @default(cuid())
+  name          String
+  grade         Int
+  academicYear  String
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  teachers    ClassTeacher[]
+  students    Student[]
+  assignments Assignment[]
+}
+
+model ClassTeacher {
+  id        String    @id @default(cuid())
+  classId   String
+  teacherId String
+  role      String    @default("primary")
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  isActive  Boolean   @default(true)
+
+  class   Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, teacherId])
+}
+
+model Student {
+  id             String   @id @default(cuid())
+  name           String
+  studentNo      String
+  enrollmentYear Int
+  classId        String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  class             Class              @relation(fields: [classId], references: [id], onDelete: Cascade)
+  assignmentResults AssignmentResult[]
+  evaluations       Evaluation[]
+}
+
+// ========== 课程管理 ==========
+model Course {
+  id        String   @id @default(cuid())
+  teacherId String
+  grade     Int
+  semester  String
+  subject   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  units   Unit[]
+
+  @@unique([teacherId, grade, semester, subject])
+}
+
+model Unit {
+  id        String   @id @default(cuid())
+  courseId   String
+  name      String
+  sortOrder Int
+  createdAt DateTime @default(now())
+
+  course  Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+}
+
+model Lesson {
+  id              String   @id @default(cuid())
+  unitId          String
+  name            String
+  sortOrder       Int
+  teachingPlan    String?  @db.Text
+  teachingGoals   String?  @db.Text
+  knowledgePoints String[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  unit        Unit         @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  assignments Assignment[]
+}
+
+// ========== 作业批改 ==========
+model Assignment {
+  id          String   @id @default(cuid())
+  teacherId   String
+  classId     String
+  lessonId    String?
+  title       String
+  imageUrl    String?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  teacher Teacher          @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  class   Class            @relation(fields: [classId], references: [id], onDelete: Cascade)
+  lesson  Lesson?          @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  results AssignmentResult[]
+}
+
+model AssignmentResult {
+  id              String   @id @default(cuid())
+  assignmentId    String
+  studentId       String
+  score           Float?
+  feedback        String?  @db.Text
+  weakPoints      String[]
+  strongPoints    String[]
+  aiAnalysis      String?  @db.Text
+  createdAt       DateTime @default(now())
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// ========== 多维度评价 ==========
+model Evaluation {
+  id          String   @id @default(cuid())
+  teacherId   String
+  studentId   String
+  dimension   String
+  score       Float
+  note        String?
+  semester    String?
+  createdAt   DateTime @default(now())
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}

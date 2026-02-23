@@ -1,0 +1,46 @@
+import { NextRequest, NextResponse } from 'next/server'
+import prisma from '@/lib/prisma'
+import { verifyPassword, generateToken, getAuthCookieOptions } from '@/lib/auth'
+
+export async function POST(request: NextRequest) {
+  try {
+    const { email, password } = await request.json()
+
+    if (!email || !password) {
+      return NextResponse.json({ error: '请输入邮箱和密码' }, { status: 400 })
+    }
+
+    // 查找用户
+    const teacher = await prisma.teacher.findUnique({ where: { email } })
+    if (!teacher) {
+      return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 })
+    }
+
+    // 验证密码
+    const isValid = await verifyPassword(password, teacher.password)
+    if (!isValid) {
+      return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 })
+    }
+
+    // 生成 Token
+    const token = generateToken({
+      userId: teacher.id,
+      email: teacher.email,
+      name: teacher.name,
+      subject: teacher.subject,
+    })
+
+    // 设置 Cookie
+    const cookieOptions = getAuthCookieOptions()
+    const response = NextResponse.json({
+      success: true,
+      user: { id: teacher.id, email: teacher.email, name: teacher.name, subject: teacher.subject },
+    })
+    response.cookies.set(cookieOptions.name, token, cookieOptions)
+
+    return response
+  } catch (error) {
+    console.error('Login error:', error)
+    return NextResponse.json({ error: '登录失败，请稍后重试' }, { status: 500 })
+  }
+}

@@ -1,0 +1,15 @@
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+node_modules
+.next
+.git
+.gitignore
+*.md
+.env
+.env.local
+.env.local.example
+.ai-config.json
+.teacher-profile.json
+uploads
