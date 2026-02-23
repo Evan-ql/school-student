@@ -76,7 +76,7 @@
          ADMIN_PASSWORD: change-me-to-your-password
          ADMIN_NAME: 管理员
        ports:
-         - "3000:3000"
+         - "7050:3000"
        volumes:
          - /volume1/docker/school-student/uploads:/app/uploads # 注意：这里要换成您自己创建的项目文件夹下的 uploads 路径
 
@@ -119,7 +119,7 @@
 1. 创建成功后，项目会自动开始拉取镜像并启动容器。
 2. 您可以在 Compose 项目列表中看到 `school-student` 项目，并查看其日志。
 3. 等待所有服务（`db` 和 `app`）都显示为绿色健康状态。
-4. 打开浏览器，访问 `http://<您的NAS的IP地址>:3000`。
+4. 打开浏览器，访问 `http://<您的NAS的IP地址>:7050`。
 5. 您应该能看到应用的注册/登录页面。
 
 ---
@@ -151,7 +151,7 @@ docker compose up -d
 
 ### 步骤 3：访问和更新
 
-- **访问**：浏览器访问 `http://<您的NAS的IP地址>:3000`。
+- **访问**：浏览器访问 `http://<您的NAS的IP地址>:7050`。
 - **查看日志**：`docker compose logs -f`
 - **停止服务**：`docker compose down`
 - **更新应用**：`docker compose pull app && docker compose up -d --force-recreate`

@@ -57,7 +57,7 @@
         container_name: student-learning-system-app
         restart: unless-stopped
         ports:
-          - "3000:3000"
+          - "7050:3000"
         environment:
           - DATABASE_URL=${DATABASE_URL}
           - JWT_SECRET=${JWT_SECRET}
@@ -127,15 +127,15 @@
 1.  项目创建完成后，您会在 Compose 列表中看到 `student-learning-system` 项目。
 2.  系统会自动启动所有服务。您可以点击项目名称进入详情页，查看各个容器（app, db, watchtower）的运行状态和日志。
 3.  等待 `app` 和 `db` 容器都显示为“running”或“healthy”状态。
-4.  打开您的浏览器，访问 `http://<您的飞牛NAS的IP地址>:3000`。
+4.  打开您的浏览器，访问 `http://<您的飞牛NAS的IP地址>:7050`。
 
 如果一切顺利，您将看到“智能教学助手”的登录页面。恭喜您，部署成功！
 
 ## 常见问题 (Troubleshooting)
 
-- **无法访问 3000 端口？**
+- **无法访问 7050 端口？**
   - 请检查 `app` 容器的日志，确认服务是否正常启动。常见的错误包括 `.env` 文件配置错误（如数据库密码不匹配）或端口冲突。
-  - 确认您的 NAS 防火墙没有阻止 3000 端口。
+  - 确认您的 NAS 防火墙没有阻止 7050 端口。
 
 - **容器反复重启？**
   - 这通常是配置错误导致的。请仔细检查 `app` 和 `db` 容器的日志，定位错误原因。最常见的原因是 `DATABASE_URL` 与 `POSTGRES_` 系列环境变量不匹配。

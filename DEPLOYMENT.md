@@ -14,7 +14,7 @@
 
 | 服务         | 镜像                               | 端口   | 数据卷         | 描述                                     |
 | :----------- | :--------------------------------- | :----- | :------------- | :--------------------------------------- |
-| `app`        | `ghcr.io/evan-ql/school-student:latest` | `3000` | `uploads_data` | Next.js 应用服务                         |
+| `app`        | `ghcr.io/evan-ql/school-student:latest` | `7050` | `uploads_data` | Next.js 应用服务                         |
 | `db`         | `postgres:16-alpine`               | `5432` | `postgres_data`| PostgreSQL 数据库服务                    |
 | `watchtower` | `containrrr/watchtower`            | N/A    | N/A            | 监控并自动更新 `app` 服务的 Docker 镜像 |
 
@@ -98,9 +98,9 @@ docker-compose ps
 
 ### 步骤 5：访问应用
 
-部署成功后，您可以通过浏览器访问您的 NAS IP 地址和 `3000` 端口来使用智能教学助手。
+部署成功后，您可以通过浏览器访问您的 NAS IP 地址和 `7050` 端口来使用智能教学助手。
 
-- **地址**: `http://<您的 NAS IP 地址>:3000`
+- **地址**: `http://<您的 NAS IP 地址>:7050`
 
 ## 4. 自动更新机制
 
@@ -148,9 +148,9 @@ docker-compose ps
 - **环境变量**: 检查 `.env` 文件中的 `JWT_SECRET` 是否已正确设置。
 
 
-部署成功后，您可以通过浏览器访问您的 NAS IP 地址和 `3000` 端口来使用智能教学助手。
+部署成功后，您可以通过浏览器访问您的 NAS IP 地址和 `7050` 端口来使用智能教学助手。
 
-- **地址**: `http://<您的 NAS IP 地址>:3000`
+- **地址**: `http://<您的 NAS IP 地址>:7050`
 
 ## 4. 自动更新机制
 
