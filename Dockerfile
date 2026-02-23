@@ -56,11 +56,11 @@ COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 # 复制 pg 相关依赖
 COPY --from=builder /tmp/pg-deps/ ./node_modules/
 
-# 复制 bcryptjs（管理员初始化需要）
+# 复制运行时必需的依赖
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
-
-# 复制 dotenv（Prisma配置需要）
 COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
+COPY --from=builder /app/node_modules/jsonwebtoken ./node_modules/jsonwebtoken
+COPY --from=builder /app/node_modules/cookie ./node_modules/cookie
 
 # 安装 prisma CLI 用于迁移
 RUN npm install -g prisma@latest
