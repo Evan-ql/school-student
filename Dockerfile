@@ -51,6 +51,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # 复制 Prisma 生成的客户端（Prisma 7 输出到 lib/generated）
 COPY --from=builder /app/lib/generated ./lib/generated
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
 
 # 复制 pg 相关依赖
 COPY --from=builder /tmp/pg-deps/ ./node_modules/
