@@ -58,6 +58,9 @@ COPY --from=builder /tmp/pg-deps/ ./node_modules/
 # 复制 bcryptjs（管理员初始化需要）
 COPY --from=builder /app/node_modules/bcryptjs ./node_modules/bcryptjs
 
+# 复制 dotenv（Prisma配置需要）
+COPY --from=builder /app/node_modules/dotenv ./node_modules/dotenv
+
 # 安装 prisma CLI 用于迁移
 RUN npm install -g prisma@latest
 
