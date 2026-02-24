@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { verifyToken } from '@/lib/auth'
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('auth-token')?.value
+  const token = request.cookies.get('auth_token')?.value
   const { pathname } = request.nextUrl
 
   // 公开路径
